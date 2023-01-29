@@ -98,6 +98,7 @@ namespace PerformanceCalculator.Precalc
             var csvStuff = makeCsvInfo(workingBeatmap.BeatmapInfo.OnlineID, ppAttributes, difficultyAttributes, modsToUse);
 
             workerParams.Writer.WriteRecord(csvStuff);
+            workerParams.Writer.NextRecord();
             
             
         }
@@ -134,7 +135,7 @@ namespace PerformanceCalculator.Precalc
 
             var legacyMods = LegacyHelper.ConvertToLegacyDifficultyAdjustmentMods(ruleset, availableMods.ToArray());
             // remove the classic mod, and nightcore (as it covers doubletime)
-            var cleanedLegacyMods = removeMods(legacyMods, new List<Type>{ typeof(OsuModClassic), typeof(OsuModNightcore), typeof(OsuModNoFail) });
+            var cleanedLegacyMods = removeMods(legacyMods, new List<Type>{ typeof(OsuModClassic), typeof(OsuModNightcore), typeof(OsuModTouchDevice) });
 
             var permutatedModCombos = permutateMods(cleanedLegacyMods);
             // filter out the following Combos:
@@ -145,6 +146,8 @@ namespace PerformanceCalculator.Precalc
 
             var writer = new StreamWriter(CsvFilePath);
             var csv = new CsvWriter(writer, csvConfig);
+
+            csv.WriteHeader<BeatmapCsvInfo>();
 
             foreach (var combo in permutatedModCombos)
             {
