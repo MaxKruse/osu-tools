@@ -94,13 +94,19 @@ namespace PerformanceCalculator.Precalc
             // assume 100% acc, and thats it
             var scoreInfo = new ScoreInfo
             {
-                Accuracy = 1.0
+                Accuracy = 1.0,
+                Mods = modsToUse,
             };
             var score = new ProcessorScoreDecoder(workingBeatmap).Parse(scoreInfo);
 
 
             var difficultyCalculator = workerParams.Ruleset.CreateDifficultyCalculator(workingBeatmap);
             var difficultyAttributes = difficultyCalculator.Calculate(modsToUse);
+
+
+
+            score.ScoreInfo.MaxCombo = difficultyAttributes.MaxCombo;
+
             var performanceCalculator = workerParams.Ruleset.CreatePerformanceCalculator();
 
             var ppAttributes = performanceCalculator.Calculate(score.ScoreInfo, difficultyAttributes);
@@ -129,7 +135,8 @@ namespace PerformanceCalculator.Precalc
             var csvConfig = new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
             {
                 NewLine = Environment.NewLine,
-                Delimiter = ","
+                Delimiter = ",",
+                BufferSize = 1024 * 1024 * 32, // 32mb buffer
             };
 
             ThreadPool.SetMaxThreads(Environment.ProcessorCount, Environment.ProcessorCount * 4);
@@ -145,7 +152,15 @@ namespace PerformanceCalculator.Precalc
 
             var legacyMods = LegacyHelper.ConvertToLegacyDifficultyAdjustmentMods(ruleset, availableMods.ToArray());
             // remove the classic mod, and nightcore (as it covers doubletime)
-            var cleanedLegacyMods = removeMods(legacyMods, new List<Type>{ typeof(OsuModClassic), typeof(OsuModNightcore), typeof(OsuModTouchDevice) });
+            var cleanedLegacyMods = removeMods(legacyMods, new List<Type>{
+                typeof(OsuModClassic),
+                typeof(OsuModNightcore),
+                typeof(OsuModTouchDevice),
+                typeof(OsuModFlashlight),
+                typeof(OsuModHidden),
+                typeof(OsuModEasy),
+                typeof(OsuModHalfTime)
+            });
 
             var permutatedModCombos = permutateMods(cleanedLegacyMods);
             // filter out the following Combos:
@@ -210,6 +225,7 @@ namespace PerformanceCalculator.Precalc
         private List<List<Mod>> permutateMods(IEnumerable<Mod> mods)
         {
             var result = new List<List<Mod>>();
+            
 
             // For each mod
             foreach (var mod in mods)
@@ -232,6 +248,9 @@ namespace PerformanceCalculator.Precalc
                     result.Add(newModCombo);
                 }
             }
+
+            result.Add(new List<Mod>());
+            
             return result;
         }
     }
