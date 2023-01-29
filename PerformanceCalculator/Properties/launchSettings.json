@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "PerformanceCalculator": {
+      "commandName": "Project",
+      "commandLineArgs": "precalc \"C:\\Users\\maxkr\\Desktop\\asdf\" result.csv",
+      "workingDirectory": "C:\\Users\\maxkr\\Desktop"
+    }
+  }
+}

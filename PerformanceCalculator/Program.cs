@@ -10,6 +10,7 @@ using osu.Game.Online;
 using PerformanceCalculator.Difficulty;
 using PerformanceCalculator.Leaderboard;
 using PerformanceCalculator.Performance;
+using PerformanceCalculator.Precalc;
 using PerformanceCalculator.Profile;
 using PerformanceCalculator.Simulate;
 
@@ -22,6 +23,7 @@ namespace PerformanceCalculator
     [Subcommand(typeof(ProfileCommand))]
     [Subcommand(typeof(SimulateListingCommand))]
     [Subcommand(typeof(LeaderboardCommand))]
+    [Subcommand(typeof(PrecalcCommand))]
     [HelpOption("-?|-h|--help")]
     public class Program
     {
