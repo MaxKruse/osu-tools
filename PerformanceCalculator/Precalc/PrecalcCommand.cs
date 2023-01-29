@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -86,6 +87,7 @@ namespace PerformanceCalculator.Precalc
                 return true;
             }
 
+            Console.WriteLine($"Working on {workingBeatmap} with {workerParams.Combo.Aggregate("", (s, mod) => s + mod.Acronym + ",")}");
 
             Mod[] modsToUse = workerParams.Combo.ToArray();
 
@@ -158,6 +160,8 @@ namespace PerformanceCalculator.Precalc
             csv.WriteHeader<BeatmapCsvInfo>();
             csv.NextRecord();
 
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             
             foreach (var file in allFiles)
             {
@@ -173,13 +177,14 @@ namespace PerformanceCalculator.Precalc
 
                     workerParams.Writer = csv;
 
-                    var shouldExlcude = worker(workerParams);
+                    shouldExclude = worker(workerParams);
 
-                    if (shouldExlcude)
+                    if (shouldExclude)
                     {
                         break;
                     }
                 }
+                
                 if (shouldExclude)
                 {
                     Console.WriteLine($"Excluding {file} because it is not osu!std");
@@ -188,6 +193,9 @@ namespace PerformanceCalculator.Precalc
             }
 
             csv.Flush();
+
+            watch.Stop();
+            Console.WriteLine($"Took {watch.Elapsed.TotalSeconds} seconds");
         }
 
         private IEnumerable<Mod> removeMods(IEnumerable startMods, IEnumerable<Type> typesToRemove)
