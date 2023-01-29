@@ -71,13 +71,21 @@ namespace PerformanceCalculator.Precalc
             return res;
         }
 
-        private static void worker(object state)
+        private bool worker(object state)
         {
 
             var workerParams = (WorkerParams)state;
 
 
             var workingBeatmap = ProcessorWorkingBeatmap.FromFileOrId(workerParams.File);
+
+            // check for gamemode
+            if (workingBeatmap.BeatmapInfo.Ruleset.ShortName != "osu")
+            {
+                Console.WriteLine($"Map {workingBeatmap} isnt osu!std, but {workingBeatmap.BeatmapInfo.Ruleset.ShortName}");
+                return true;
+            }
+
 
             Mod[] modsToUse = workerParams.Combo.ToArray();
 
@@ -99,8 +107,8 @@ namespace PerformanceCalculator.Precalc
 
             workerParams.Writer.WriteRecord(csvStuff);
             workerParams.Writer.NextRecord();
-            
-            
+
+            return false;
         }
 
         private class WorkerParams
@@ -148,10 +156,13 @@ namespace PerformanceCalculator.Precalc
             var csv = new CsvWriter(writer, csvConfig);
 
             csv.WriteHeader<BeatmapCsvInfo>();
+            csv.NextRecord();
 
-            foreach (var combo in permutatedModCombos)
+            
+            foreach (var file in allFiles)
             {
-                foreach (var file in allFiles)
+                bool shouldExclude = false;
+                foreach (var combo in permutatedModCombos)
                 {
                     var workerParams = new WorkerParams
                     {
@@ -162,7 +173,17 @@ namespace PerformanceCalculator.Precalc
 
                     workerParams.Writer = csv;
 
-                    worker(workerParams);
+                    var shouldExlcude = worker(workerParams);
+
+                    if (shouldExlcude)
+                    {
+                        break;
+                    }
+                }
+                if (shouldExclude)
+                {
+                    Console.WriteLine($"Excluding {file} because it is not osu!std");
+                    continue;
                 }
             }
 
