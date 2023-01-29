@@ -26,12 +26,12 @@ namespace PerformanceCalculator.Precalc
     {
         [UsedImplicitly]
         [Required, DirectoryExists]
-        [Argument(0, Name = "Required. A folder containing .osu files")]
+        [Argument(0, Description = "Required. A folder containing .osu files")]
         public string OsuFilesFolder { get; }
 
         [UsedImplicitly]
         [Required]
-        [Argument(1, Name = "Required. Output file for csv results.")]
+        [Argument(1, Description = "Required. Output file for csv results.")]
         public string CsvFilePath { get; }
 
         public class BeatmapCsvInfo

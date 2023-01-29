@@ -28,6 +28,7 @@ Commands:
   difficulty    Computes the difficulty of a beatmap.
   leaderboard   Computes the performance (pp) for every player in a part of the leaderboard.
   performance   Computes the performance (pp) of replays on a beatmap.
+  precalc       Computes all possible permutations of mods for .osu files in a given folder.
   profile       Computes the total performance (pp) of a profile.
   simulate      Computes the performance (pp) of a simulated play.
 
@@ -87,6 +88,23 @@ Speed          : 44.7315288123673
 Accuracy       : 61.9354071284508
 pp             : 235.580094436267
 ```
+
+### Precalc
+```
+> dotnet run -- precalc --help
+
+Usage: dotnet PerformanceCalculator.dll precalc [options] <OsuFilesFolder> <CsvFilePath>
+
+Arguments:
+  OsuFilesFolder          Required. A folder containing .osu files
+  CsvFilePath             Required. Output file for csv results.
+
+Options:
+  -?|-h|--help            Show help information.
+  -o|--output <file.txt>  Output results to text file.
+```
+
+Computes all possible mod permutations (for osu!stable), and the given PP and SR at 100% Accuracy. 
 
 ### Profile
 ```
