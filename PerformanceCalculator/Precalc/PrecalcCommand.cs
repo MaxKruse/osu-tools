@@ -134,7 +134,7 @@ namespace PerformanceCalculator.Precalc
 
             var legacyMods = LegacyHelper.ConvertToLegacyDifficultyAdjustmentMods(ruleset, availableMods.ToArray());
             // remove the classic mod, and nightcore (as it covers doubletime)
-            var cleanedLegacyMods = removeMods(legacyMods, new List<Type>{ typeof(OsuModClassic), typeof(OsuModNightcore) });
+            var cleanedLegacyMods = removeMods(legacyMods, new List<Type>{ typeof(OsuModClassic), typeof(OsuModNightcore), typeof(OsuModNoFail) });
 
             var permutatedModCombos = permutateMods(cleanedLegacyMods);
             // filter out the following Combos:
